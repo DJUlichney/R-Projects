@@ -1,0 +1,290 @@
+---
+title: "MTH-235 Exam 1"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+# Instructions
+
+* This exam is due **by 11:59 PM on Thursday, February 25** and should be 
+submitted in Blackboard (under Assignments / Exams).
+* Like always, for **every** question, your task is to do two things:
+    1. Write **one line** of code in the answer box that outputs your answer to 
+the question at hand.
+    2. If you need more than one line of code to answer the question, put the 
+other lines of code in the "supporting work" box.
+* Be sure that you have electronically signed this exam (see below).    
+ 
+# Important Details
+* You are **not** allowed to discuss the exam with any other person, living or 
+dead.
+* You **are** allowed to consult sources from within our Blackboard site, such 
+as:
+    * The cheat sheet
+    * Old Colab worksheets or keys
+    * Old assignment submissions or keys
+* You **are** allowed to consult documentation within RStudio.
+* You are **not** allowed to consult other internet sources besides our own
+Blackboard site. In particular, Stack Overflow is off limits for this exam,
+including searching the site (even if not posting questions there).
+* Control-flow measures like `if` / `ifelse`, `while`, or `for` are disallowed
+for this exam.
+* The point of every question is to use a Monte Carlo simulation, even if 
+directly calculating the answer using analytic methods is straightforward.
+* If you are unsure about whether something is allowed or not, check with me
+first.
+
+# Scoring
+
+Each non-bonus problem is worth ten points; partial credit will be considered.
+The bonus problem is optional and is worth 5 points. There are a total of 70 
+points on this exam.
+
+
+\vfill
+
+By signing below, you certify that:
+
+* You have read all the guidelines on this sheet and have followed them all.
+* You have not discussed the exam with any other person. 
+* You have not used any disallowed source.
+* Your solutions are all based on your own understanding, and you could recreate
+them with no assistance.
+
+Signature:
+<!-- Erase the entire next line and replace it with your full name to sign. -->
+Dennis Ulichney
+
+\newpage
+
+# Exam
+
+## Problem 1
+
+If you roll ten dice (D6), what is the probability that between two and four 
+(inclusively) of them will land on the number 6?
+
+### Supporting Work
+```{r}
+rollcount <- function(){
+  sixcount <- sum(sample(1:6,10,replace=T) == 6)
+  sixcount >= 2 & sixcount <= 4
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,rollcount()))
+```
+
+(Correct answer: $\frac{3,359,375}{6,718,464}$, which is very close to -- but
+not exactly equal to -- 50\%.)
+
+---
+
+## Problem 2
+
+Suppose you roll ten dice (D6); make a histogram representing the **number of 
+distinct values** you see would see from those ten rolls. 
+
+Example: If you rolled `3, 4, 6, 6, 5, 5, 2, 5, 6, 2`, then this should appear
+in the histogram as a 5 because you saw five distinct values (all possible 
+values except 1).
+
+Another example: if you rolled `4, 4, 4, 4, 4, 4, 4, 4, 4`, then this should
+appear in the histogram as a 1 because you saw just one distinct value.
+
+### Supporting Work
+```{r}
+tenroll <- function(){
+  length(unique(sample(1:6,10,replace=T)))
+}
+```
+
+### Answer
+```{r}
+hist(replicate(10000,tenroll()),breaks=0.5:6.5)
+```
+
+(Correct answer: a histogram with bars of varying heights ranging from 1 to 6;
+for full credit, the bars should have no gaps between them and each bar should
+correspond clearly to exactly one whole number.)
+
+---
+
+## Problem 3
+
+Two people are playing a competitive board game. Player A is allowed to roll two
+D6's and declare her score to be the larger of the two dice; player B instead
+rolls three D10's and declares his score to be the average of the three dice. In
+the event of a tie, Player A is declared the winner. What is the probability 
+that Player B wins?
+
+<!-- To reiterate: Player A rolls 2 x D6, while Player B rolls 3 x D10. -->
+
+### Supporting Work
+```{r}
+gameroll <- function(){
+  rollA <- max(sample(1:6,2,replace=T))
+  rollB <- mean(sample(1:10,3,replace=T))
+  rollB > rollA
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,gameroll()))
+```
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 4
+
+An airline finds that if a person books a ticket on a certain flight, they have 
+a $95\%$ chance of showing up for the flight. If the airline sells 160 tickets 
+for a flight with only 155 seats, what is the probability that a seat will be 
+available for every person holding a reservation and planning to fly?
+
+### Supporting Work
+```{r}
+seatcheck <- function(){
+  sum(sample(0:1,160,replace=T,prob=c(5,95))) <= 155
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,seatcheck()))
+```
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 5
+
+If you draw cards from a standard deck of 52 without replacement, what is the
+expected number of draws required to obtain your first heart? (Your task for
+this question is to use the `cards` vector below.)
+
+```{r cards, include = FALSE}
+cards <- 
+  paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"),
+         rep(c("H", "C", "S", "D"), each = 13))
+  # format of cards is: [value][suit], such as "3H" for 3 of hearts,
+  # "7C" for 7 of clubs, "TD" for 10 of diamonds
+```
+
+### Supporting Work
+```{r}
+drawH <- function(){
+  min(which(substr(sample(cards),2,2) == "H"))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,drawH()))
+```
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 6
+
+In the game Bingo, a dealer draws several balls from a bin. There are 75 balls
+in the bin, each labeled with both a letter and a number. The labels are B-1, 
+B-2, ..., B-15, I-16, I-17, ..., I-30, N-31, N-32, ..., N-45, G-46, G-47, ...,
+G-60, O-61, O-62, ..., O-75. (Only the letters B, I, N, G, O are used, and each
+appears with 15 different numbers.) If you draw three balls without replacement 
+from such a bin, what is the probability that they all have the same letter? 
+
+There is no preloaded vector that you are required to use for this problem; 
+construct whatever you need to answer the question.
+
+### Supporting Work
+```{r}
+BINGO <- paste(rep(c("B","I","N","G","O"),each=15),c(1:75),sep="-")
+lettermatch <- function(){
+  length(unique(substr(sample(BINGO,3,replace=F),1,1))) == 1
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,lettermatch()))
+```
+
+(Correct answer: $\frac{91}{2701} \approx 0.0337$)
+
+---
+
+## Problem 7
+
+A student answers a multiple-choice examination question that offers four
+possible answers. The probability that the student knows the answer to each
+question is $0.8$, and the probability that the student does not know (and
+therefore must guess) is $0.2$. If the student guesses, she has a $1$ in $4$
+chance of selecting the correct answer. What is the overall probability that the
+student will get one particular question right? 
+
+(Recall: no `if` or `ifelse` uses are permitted on this exam.)
+
+### Supporting Work
+```{r}
+choice <- function(){
+  sample(c(1,sample(0:1,1,prob=c(3,1))),1,prob=c(8,2)) == 1
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,choice()))
+```
+
+(Correct answer: $0.85$)
+
+---
+## Bonus Problem
+
+Write a function which takes a whole number input $n$ and outputs the answer to
+the following question:
+
+> If you take $n$ distinct objects and rearrange them in a random order, what is
+the expected number of objects that will be in their same original starting
+position?
+
+> Example: If you rearrange the five letters ABCDE, you might obtain BDCAE. In
+this example, two letters (C and E) are in their original starting position.
+
+Your **Answer** should be a test of this function on the input $n = 555$. Note
+that the function must be fully parametrized in order to receive credit -- that
+is, the number $n = 555$ cannot be hard-coded into it.
+
+(To be clear: the Monte Carlo simulation should occur entirely within the
+function you define. This is not how we have typically done things, but it is a
+perfectly sensible to do.)
+
+### Supporting Work
+```{r}
+samespot <- function(n){
+  sum(sample(1:n) == 1:n)
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,samespot(555)))
+```
+
+(The correct answer is the expected number of the 555 objects that remain in
+their original place when rearranged in a random order, but I am not going to
+tell you what that number is.)
+
+<!-- Self-assessment for exams seems weird, so let's skip it. -->

@@ -1,0 +1,199 @@
+---
+title: "MTH-235 Assignment 7"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+---
+
+## Problem 1
+Suppose you roll two dice and take their sum. What is the probability that the
+sum is 12, given that the sum is larger than 9?
+
+### Supporting Work
+```{r}
+p1 <- function(){
+  roll <- sample(1:6,2,replace=T)
+  (sum(roll)==12)[sum(roll)>9]
+}
+```
+
+### Answer
+```{r}
+mean(unlist(replicate(10000,p1())))
+```
+
+(Correct answer: $1/6 \approx 0.1667$)
+
+---
+
+## Problem 2
+Suppose you roll two dice and take their sum. What is the probability that the
+sum is 9 or higher, given that at least one of the dice is odd?
+
+### Supporting Work
+
+```{r}
+p2 <- function(){
+  roll <- sample(1:6,2,replace=T)
+  (sum(roll)>=9)[any(roll%%2==1)]
+}
+```
+
+### Answer
+
+```{r}
+mean(unlist(replicate(10000,p2())))
+```
+
+(Correct answer: $7/27 \approx 0.2593$)
+
+---
+
+```{r, include = FALSE}
+  # do not edit this block
+  # note that the option include = FALSE hides this from your PDF output
+cards <- 
+  paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"),
+         rep(c("H", "C", "S", "D"), each = 13))
+  # format of cards is: [value][suit], such as "3H" for 3 of hearts,
+  # "7C" for 7 of clubs, "TD" for 10 of diamonds
+```
+
+## Problem 3
+
+If you draw a five-card hand (without replacement) from a deck of cards, what is
+the probability that the fourth card is a heart given that the first two cards
+were *not* hearts? (Use the `cards` vector contained in the block above.)
+
+
+### Supporting Work
+```{r}
+p3 <- function(){
+  draw <- sample(cards,5)
+  (substr(draw[4],2,2)=="H")[all(substr(draw[1:2],2,2)!="H")]
+}
+```
+
+### Answer
+```{r}
+mean(unlist(replicate(1000,p3())))
+```
+
+(Correct answer: $13/50 = 0.26$)
+
+---
+
+## Problem 4
+Suppose you roll five dice. What is the probability that their sum is at least
+18, given that at least one of the dice is a six?
+
+### Supporting Work
+
+```{r}
+p4 <- function(){
+  roll <- sample(1:6,5,replace=T)
+  (sum(roll)>=18)[any(roll==6)]
+}
+```
+
+### Answer
+```{r}
+mean(unlist(replicate(10000,p4())))
+```
+
+(Correct answer: around $69\%$)
+
+---
+
+## Problem 5
+Two people are playing a board game in which they must roll three dice. What is
+the probability that they roll the same values, ignoring order but accounting
+for repetitions? (That is, $(3, 5, 5)$ should be regarded as the same as 
+$(5, 3, 5)$ but different from $(3, 3, 5)$.)
+
+### Supporting Work
+```{r}
+p5 <- function(){
+  p1 <- sample(1:6,3,replace=T)
+  p2 <- sample(1:6,3,replace=T)
+  identical(sort(p1),sort(p2))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,p5()))
+```
+
+(Correct answer: around $2.1\%$ or $2.2\%$)
+
+---
+
+## Problem 6
+
+Suppose you draw five cards. What is the probability that all are either hearts
+or clubs? (Use the `cards` vector from above.)
+
+### Supporting Work
+```{r}
+p6 <- function(){
+  draw <- sample(cards,5)
+  all(substr(draw,2,2)=="H" | substr(draw,2,2)=="C")
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,p6()))
+```
+
+(Correct answer: $253/9996 \approx 0.026$)
+
+---
+
+## Problem 7
+Suppose you are drawing capital letters without replacement from a jar that
+contains all 26 letters. What is the expected number of draws to collect every
+vowel (A, E, I, O, U)?
+
+### Supporting Work
+```{r}
+p7 <- function(){
+  max(which(sample(LETTERS) %in% c("A","E","I","O","U")))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,p7()))
+```
+
+(Correct answer: $22.5$)
+
+---
+
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn full credit because I put forth the effort necessary to fully complete the assignment.
+
+
+

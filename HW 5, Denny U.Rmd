@@ -1,0 +1,205 @@
+---
+title: "MTH-235 Assignment 5"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+
+## Problem 1
+
+If you flip 100 coins, what is the probability that **exactly** 50 of them land 
+on heads? (Write a function and replicate it 10,000 times to investigate; this
+will be our standard procedure for investigating probabilities.)
+
+### Supporting Work
+```{r}
+flipsum <- function(){
+  sum(sample(c("H","T"),100,replace=T) == "H")
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,flipsum() == 50))
+```
+
+(Correct answer: $\approx 0.0796$; remember that from here on out, your answers
+are expected to be close, but probably not exactly equal to, the correct ones.)
+
+---
+
+## Problem 2
+
+If you flip 100 coins, what is the probability that between 40 and 60 of them
+(inclusively) land on heads?
+
+### Supporting Work
+```{r}
+flipsum <- function(){
+  sum(sample(c("H","T"),100,replace=T) == "H")
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,flipsum() >= 40 | flipsum() <= 60))
+```
+
+(Correct answer: $\approx 0.9648$)
+
+---
+
+## Problem 3
+A bin contains five components from supplier A, three from supplier B, and two 
+from supplier C. If three components are randomly selected (without replacement)
+for testing, how many different suppliers are represented in the sample? Make a 
+histogram of 10,000 simulations; be sure to consider the `breaks`. (Recall: you 
+saw this problem setup in the last assignment.)
+
+### Supporting Work
+```{r}
+bin <- rep(c("A","B","C"),times=c(5,3,2))
+supcount <- function(){
+  length(unique(sample(bin,3)))
+}
+```
+
+### Answer
+```{r}
+hist(replicate(10000,supcount()),breaks = .5 : 3.5)
+```
+
+(Correct answer: a histogram with a tall bar centered around 2, a medium-ish bar
+centered around 3, and a short bar centered around 1. The bars should be
+adjacent to one another with no whitespace between them.)
+
+---
+
+## Problem 4
+
+A bin contains five components from supplier A, three from supplier B, and two 
+from supplier C. If three of the components are randomly selected for testing, 
+what is the probability that each supplier would have at least one component 
+tested? 
+
+### Supporting Work
+```{r}
+bin <- rep(c("A","B","C"),times=c(5,3,2))
+supcount <- function(){
+  length(unique(sample(bin,3)))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,supcount()==3))
+```
+
+(Correct answer: $1/4$)
+
+---
+
+## Problem 5
+
+Suppose you draw `LETTERS` without replacement from a jar. What is the expected
+number of draws required to collect all three of the letters A, B, and C?
+
+### Supporting Work
+```{r}
+drawABC <- function(){
+  draw <- sample(LETTERS)
+  max(c(which(draw=="A"),which(draw=="B"),which(draw=="C")))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,drawABC()))
+```
+
+(Correct answer: $\approx 20.25$ draws)
+
+---
+
+## Problem 6
+
+A player in a game must roll either a D4 (a 4-sided die) or a D6 (a 6-sided
+die), depending on the outcome of a coin flip. What is their expected die roll?
+
+**HINT:** Inside your function, make two calls to the `sample()` function -- one
+corresponding to the coin flip, and the other to the die roll. Use the output of
+one of the `sample()` functions as an input to the other.
+
+### Supporting Work
+```{r}
+fliproll <- function(){
+  flip <- sample(c(4,6),1,replace=T)
+  roll <- sample(1:flip,1,replace=T)
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,fliproll()))
+```
+
+(Correct answer: $3$)
+
+---
+
+## Problem 7
+
+A person who frequently travels from Cleveland to Chicago drives her car with 
+$40\%$ probability and takes the train with $60\%$ probability. If she takes her
+car, she has a $50\%$ chance of a 10-minute traffic delay (and a $50\%$ of no 
+delay at all); if she takes the train, she has a $10\%$ chance of a one-hour 
+traffic delay (and a $90\%$ chance of no delay at all). What is her expected 
+delay?
+
+**HINT:** This is a slightly more challenging multistage problem. The problem
+would certainly be more straightforward if you were permitted to use `if`
+structures -- but that is still off the table, for now. One way to approach this
+is to simulate *both* a car delay and a train delay independently, then use the 
+`sample()` function again to select one of those.
+
+### Supporting Work
+```{r}
+delaycalc <- function(){
+  car <- sample(c(0,10),1)
+  train <- sample(c(0,60),1,prob=c(9,1))
+  sample(c(car,train),1,prob=c(4,6))
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,delaycalc()))
+```
+
+(Correct answer: $5.6$ minutes)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn full credit because I put forth the effort necessary to answer all questions correctly.
+
+
+

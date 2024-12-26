@@ -1,0 +1,121 @@
+---
+title: "MTH-235 Assignment 1"
+author: "Dennis Ulichney"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+This is an R Markdown Notebook. Much like in Colab or Jupyter notebooks, code is
+stored in chunks like the one below. You can run it by clicking the play button
+in the upper right of the chunk, or by placing your cursor inside the chunk and
+selecting "Run Current Chunk" from the drop-down menu under "Run" at the top of
+this editor window.
+
+To get started, try running the code block below.
+
+```{r}
+plot(cars)
+```
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box. See the example below.
+
+---
+
+## Problem 0 (Example)
+Evaluate the following expression in R:
+$$ \arccos(\cos(2 \pi)) $$
+
+### Supporting Work
+```{r}
+x <- cos(2 * pi)
+```
+
+### Answer
+```{r}
+acos(x)  # this is the arc cosine function in r
+```
+
+Here's a second valid solution to the same problem:
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+acos(cos(2 * pi))
+```
+
+Since we were able to answer the question with just a single line of code this
+time, there was no need to put anything into the Supporting Work block.
+
+---
+
+When you are done with the assignment, your task is to submit TWO artifacts in
+Blackboard:
+
+1. this .rmd file
+2. the associated .pdf file made by clicking the "Knit" button above
+
+Click the "Knit" button now to preview the file. Then, come back to this editor
+and fill in the code blocks below to answer the questions.
+
+**Note that this assignment is intended to be easy.**
+
+---
+
+## Problem 1
+Evaluate the fraction $22/7$. (NOTE: Don't worry about the dollar signs; they're
+just LaTeX syntax to make the fraction look nice on the PDF output.)
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+22/7
+```
+
+---
+
+## Problem 2
+Find the square root of $500$.
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sqrt(500)
+```
+
+---
+
+## Problem 3
+Compute $\ln(1,000,000)$.
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+log(1000000)
+```
+

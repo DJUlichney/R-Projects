@@ -1,0 +1,258 @@
+---
+title: "MTH-235 Assignment 4"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+## Problem 1
+Write a function, `c_to_f()`, that takes a (numerical) input as a temperature in
+degrees Celsius and converts it to a temperature in degrees Fahrenheit. See
+[here](https://en.wikipedia.org/wiki/Celsius#See_also) for a reference of the
+underlying mathematics.
+
+### Supporting Work
+```{r}
+c_to_f <- function(x){
+  # fill this part in
+  (9/5)*x + 32
+}
+```
+
+### Answer
+```{r}
+# leave this entire code block alone
+c_to_f(c(0, 37, 100))
+```
+
+(Correct answers: $32$, $98.6$, $212$)
+
+---
+
+## Problem 2
+Write a function that takes a numeric *vector* as input and produces as an
+output the *range* of the vector, which is defined as the distance between its
+largest and smallest value. Test your function on the `test_vector_1`, which is
+defined in the Supporting Work block below. 
+
+You should write your function in the Supporting Work block and test it in the
+Answer block; see the previous problem for an example.
+
+**NOTE**: You should not name your function `range()`, because there is already 
+an R function with that name that does something else.
+
+
+### Supporting Work
+```{r}
+# ===== leave code below alone =====
+set.seed(5)
+test_vector_1 <- rnorm(10000)
+  # generates 10,000 values with the standard normal distribution
+  # we will encounter this concept later in the class
+test_vector_2 <- test_vector_1 + rnorm(10000, mean = 0, sd = 0.5)
+  # create a second vector to use for a later problem
+set.seed(as.numeric(Sys.time()))    # undoes effect of setting random seed
+# ===== leave code above alone =====
+# put your code below here
+range <- function(x){
+  max(x) - min(x)
+}
+
+```
+
+### Answer
+```{r}
+range(test_vector_1)
+```
+
+(Correct answer: $7.753$)
+
+---
+
+## Problem 3
+
+Suppose $x = (x_1, x_2, \dots, x_n)$ and $y = (y_1, y_2, \dots, y_n)$ are two
+numeric vectors of the same length. The **linear correlation coefficient** 
+between $x$ and $y$ is defined to be
+$$ r = \frac{\sum \left[ (x_i - \overline x)(y_i - \overline y) \right]}
+{(n-1) s_x s_y}$$
+where $\overline x, \overline y$ are the respective means of $x, y$ and
+$s_x, s_y$ are the respective standard deviations of $x, y$. (Recall that the
+function in R to compute standard deviations is `sd()`.)
+
+Write a function that accepts as input two numeric vectors of equal length and
+produces as output their correlation coefficient. Test your function on the
+vectors `test_vector_1` and `test_vector_2`, which were defined in a code block 
+above.
+
+**NOTE:** This function is already implemented in R as `cor()`, so you should
+name your function something else. Your goal is to make a function and produce
+the same output as `cor(test_vector_1, test_vector_2)`.
+
+### Supporting Work
+```{r}
+CC <- function(x,y){
+    sum((x-mean(x))*(y-mean(y)))/((length(x)-1)*sd(x)*sd(y))
+}
+```
+
+### Answer
+```{r}
+CC(test_vector_1,test_vector_2)
+```
+
+(Correct answer: $0.8941$)
+
+---
+
+## Problem 4
+Write a function that takes a positive integer `n` as input, flips $n$ coins, 
+and outputs `TRUE` if the coins all land on the same face (and `FALSE` 
+otherwise). Test your function in the answer block by supplying the input
+$n = 3$. Remember: no `if` structures allowed!
+
+### Supporting Work
+```{r}
+# write your function here
+flip <- function(n){
+  length(unique(sample(0:1,n,replace=T))) == 1
+}
+
+```
+
+### Answer
+```{r}
+# test your function with n = 3 here
+flip(3)
+```
+
+(Correct answer: Your function should output `TRUE` about $1/4$ of the time and
+`FALSE` about $3/4$ of the time if evaluated repeatedly.)
+
+---
+
+## Problem 5
+A bin contains five components from supplier A, three from supplier B, and two 
+from supplier C. Write a function that simulates drawing three components 
+without replacement from this bin for testing and counts the number of different
+suppliers represented in the sample. (Example: if the components drawn are from
+suppliers A, C, A, then the output of the function should be 2, because two
+different suppliers are represented.)
+
+**HINT**: One very useful function that we have not previously encountered is
+`unique(x)`, which outputs a vector of the unique entries in the vector `x` --
+that is, it removes repetitions from `x`. How might you combine this vector with
+other functions we have encountered?
+
+### Supporting Work
+```{r}
+bin <- function(){
+  length(unique(sample(rep(c('A','B','C'),times=c(5,3,2)),3)))
+}
+```
+
+### Answer
+```{r}
+bin()
+```
+
+(Correct answer: Your function should output one of the numbers 1, 2, or 3, and 
+the output should change upon repeated evaluations. The most common output
+should be 2; the output of 1 is rare.)
+
+---
+
+## Interlude
+
+```{r, include = FALSE}
+  # do not edit this block
+  # note that the option include = FALSE hides this from your PDF output
+cards <- 
+  paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"),
+         rep(c("H", "C", "S", "D"), each = 13))
+  # format of cards is: [value][suit], such as "3H" for 3 of hearts,
+  # "7C" for 7 of clubs, "TD" for 10 of diamonds
+```
+
+The `cards` vector, which you can place in your environment by running the block
+above, contains all cards in a standard 52-card deck. (You have written a
+version of this vector in previous assignments.)
+
+To take a card from the `cards` vector and extract either the suit or the value,
+you might find the `substr()` function to be useful; refer to the cheat sheet
+for syntax and examples. 
+
+---
+
+## Problem 6
+Write a function that simulates drawing `n` cards without replacement from the
+`cards` vector and counts how many hearts (suit of H) are drawn. Test your
+simulation in the answer block with $n = 10$.
+
+### Supporting Work
+```{r}
+cards <- paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"), rep(c("H", "C", "S", "D"), each = 13))
+hearts <- function(n){
+  sum(substr(sample(cards,n),2,2) == "H")
+}
+```
+
+### Answer
+```{r}
+hearts(10)
+```
+
+(Correct answer: your function should output a number between 0 and 10
+inclusively upon repeated evaluation. Note that some outputs, such as those
+between 6 and 10, are theoretically possible but will be extraordinarily rare in
+practice.)
+
+---
+
+## Problem 7
+Write a function that simulates drawing `n` cards without replacement from the
+`cards` vector and counts how many face cards (value of J, Q, or K) are drawn.
+Test your simulation in the answer block with $n = 10$.
+
+### Supporting Work
+```{r}
+cards <- paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"), rep(c("H", "C", "S", "D"), each = 13))
+face <- function(n){
+  sum(substr(sample(cards,n),1,1) %in% c("J","Q","K"))
+}
+```
+
+### Answer
+```{r}
+face(10)
+```
+
+(Correct answer: your function should output a number between 0 and 10 
+inclusively upon repeated evaluation. Note that some outputs, such as those
+between 6 and 10, are theoretically possible but will be extraordinarily rare in
+practice.)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn the full amount because I put forth enough effort to complete each question correctly.
+
+
+

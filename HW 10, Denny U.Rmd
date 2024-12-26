@@ -1,0 +1,280 @@
+---
+title: "MTH-235 Assignment 10"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+
+
+## Problem 1a
+
+A company claims that no more than 0.1\% of its products are defective --  but
+you suspect the real defective rate is higher. (For the sake of this problem, we
+will assume the worst case -- that is, exactly 0.1\% of its products are 
+defective.) A random sample of 1,433 products reveals three defective units. Is 
+this evidence of a problem? First, **visualize** this sample by placing it in 
+the context of what many simulations involving taking 1,433 products with a
+0.1\% defective rate as the company claims.
+
+### Supporting Work
+
+```{r}
+p1 <- function(){
+  sum(sample(0:1, 1433, replace = TRUE, prob = c(99.9, .1)))
+}
+```
+
+### Answer
+
+```{r}
+hist(replicate(10000, p1()), breaks = -.5:10.5)
+abline(v = 3, col = 'blue')
+```
+
+Correct answer: (A histogram that mostly descends from left to right, with a 
+colored vertical line to distinguish the 3. Be sure to set the `breaks`; one 
+helpful hint is that the number of defectives is very, very rarely larger than 
+10.)
+
+---
+
+## Problem 1b
+
+Reconsider the previous problem. **Evaluate** the likelihood of the sample by
+computing the $p$-value -- that is, the probability that three or more units 
+would be defective out of 1,433.
+
+### Supporting Work
+
+```{r}
+p1 <- function(){
+  sum(sample(0:1, 1433, replace = TRUE, prob = c(99.9, .1)))
+}
+```
+
+### Answer
+
+```{r}
+mean(replicate(10000, p1() >= 3))
+```
+
+(Correct answer: about $0.1744$)
+
+---
+
+## Problem 1c
+
+Does the sample indicate evidence that the company's claim is wrong? Why or why
+not?
+
+### Answer
+
+<!-- new question type: short answer 
+
+Answer by typing text after the quote arrow below ">". Be sure to look at the
+knitted PDF to make sure that your answer appears reasonably.
+
+Example:
+> This is my answer line
+--> 
+
+> The sample is not evidence that the company's claim is wrong, it is
+not particularly unusual with the defect rate they have given (p > .1).
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 2
+
+You want to know if a coin is fair. You flip it 100 times and it lands on heads
+32 of those times. What type of test should you use?
+
+### Answer
+
+<!-- New question type: multiple-choice
+
+Answer by placing replacing the whitespace in a box with an X.
+Example: What is the name of the university where you are currently studying?
+
+- [ ] Cleveland State
+- [ ] John Carroll
+- [X] Baldwin Wallace
+- [ ] Ohio Northern
+
+-->
+
+- [ ] a left-tailed test, because the simulated outcomes have a bell curve
+shape centered around 50 and 32 is on the left side of them
+- [X] a two-sided test, because we didn't have a suspicion **before the sample
+was collected** to lean one way or another
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 3
+
+If a right-tailed test gives a $p$-value of $0.022$, what would the $p$-value of
+the corresponding two-tailed test be?
+
+### Answer
+
+<!-- answer by converting one [ ] to [X] -->
+
+- [ ] $0.011$
+- [ ] $0.022$
+- [X] $0.044$
+- [ ] we need more information to determine the answer
+
+---
+
+## Problem 4a
+
+A recent drug trial conducted by Pfizer aimed to investigate the effectiveness
+of its vaccine for the novel coronavirus. The experiment consisted of taking
+large numbers of participants, some of whom were given the vaccine, and some of
+whom were given a placebo. Then, the number of infected participants among the
+two groups was recorded. In words, what was their null hypothesis ($H_0$)? 
+(Your answer should be in non-technical language that someone who had never
+taken a statistics class would understand.)
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+>  Since Pfizer is trying to prove that their vaccine is effective, the
+null hypothesis would be that their vaccine is not effective.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 4b
+
+The $p$-value in the aforementioned experiment was found to be less than
+$0.0001$. What does this mean about the effectiveness of the vaccine?
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> A p-value of .0001 indicates that the vaccine is very much effective.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 5a
+
+Suppose you set up a hypothesis test to investigate the relationship between a
+lack of sleep and test scores. You use the following hypotheses:
+- null hypothesis, $H_0$: a lack of sleep has no effect on test scores
+- alternative hypothesis, $H_a$: a lack of sleep lowers test scores
+If you compute a $p$-value of $0.0243$, what does this imply about your research
+question? (Give an answer using non-technical language that would make sense to
+a person who has never taken a statistics course. Use language specific to this
+problem.)
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> A p-value of .0243 indicates a moderate amount of evidence that a lack of
+sleep lowers test scores.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 5b
+
+Consider the same setup as problem 5a. If the $p$-value you computed was instead
+equal to $0.1780$, what would this imply about your research question? (As
+before, give a non-technical answer.)
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> A p-value of .1780 indicates that a lack of sleep most likely does not
+lower test scores.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 5c
+
+Consider the same setup as problem 5a. If the $p$-value you computed was instead
+equal to $0.0003$, what would this imply about your research question? (As
+before, give a non-technical answer.)
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> A p-value of .0003 indicates that a lack of sleep almost certainly lowers
+test scores.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 6
+
+You wonder if a six-sided die is fair. You roll it 100 times and it lands on the
+six side 23 times. Does this constitute good evidence that it is biased?
+
+Your answer should include *four* required elements: a null hypothesis (in 
+text), an alternative hypothesis (in text), a p-value (calculated based on some
+simulations), and a conclusion (in text).
+
+### Supporting Work
+```{r}
+p6 <- function(){
+  sum(sample(1:6, 100, replace = TRUE) == 6)
+}
+```
+
+### Answer
+
+Null hypothesis: <!-- put text after the > below -->
+
+> The die is fair.
+
+Alternative hypothesis: <!-- put text after the > below -->
+
+> The die is not fair.
+
+$p$-value:
+```{r}
+mean(replicate(10000, p6() >= 23)) * 2
+```
+(Correct answer: $0.1260$)
+
+Conclusion: <!-- put text after the > below -->
+
+> The die is most likely fair, getting 23 sixes from 100 rolls is not too unusual.
+
+
+## Self Assessment:
+
+(We're skipping self-assessment this time, since you'll be discussing these in
+small groups.)
+
+
+

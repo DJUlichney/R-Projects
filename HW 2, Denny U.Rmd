@@ -1,0 +1,117 @@
+---
+title: "MTH-235 Assignment 2"
+author: "Dennis Ulichney"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+## Problem 1
+Find the sum of all integers between 50 and 150 (inclusively).
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sum(50:150)
+```
+
+(Correct answer: $10,100$)
+
+---
+
+## Problem 2
+Find the sum of the numbers in the sequence 7, 10, 13, ..., 997, 1000.
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sum(seq(7,1000,by=3))
+```
+
+(Correct answer: $167,162$)
+
+
+---
+
+## Problem 3
+Write a "deck of cards" vector: `AH, 2H, 3H, ..., TS, JS, QS, KS.` The order of
+the cards is not important, but every value (A, 2, 3, 4, 5, 6, 7, 8, 9, T, J, Q,
+K) should be matched with every suit (H, D, C, S).
+
+### Supporting Work
+```{r}
+v1 <- c('A',2:9,'T','J','Q','K')
+v2 <- c('H','C','D','S')
+```
+
+### Answer
+```{r}
+paste0(rep(v1,times=4),rep(v2,each=13))
+```
+
+(Correct answer: the vector of length 52 described in the problem statement)
+
+---
+
+## Problem 4
+
+Find a decimal approximation of the product
+$$
+\prod_{n=1}^{1000} \left( \frac{4 n^2}{4n^2 - 1} \right)
+= \frac{4 \cdot 1^2}{4 \cdot 1^2 - 1} 
+\cdot \frac{4 \cdot 2^2}{4 \cdot 2^2 - 1} 
+\dots \frac{4 \cdot (1000)^2}{4 \cdot (1000)^2 - 1}
+= \frac{4}{3} \cdot \frac{16}{15}
+\cdots \frac{4,000,000}{3,999,999}.
+$$
+
+**NOTE**: In RStudio, you can hover over LaTeX syntax like the above to see it
+rendered in a human-readable form. It will also appear in a human-readable form
+when you knit the PDF output.
+
+**HINT**: Suppose you ask R to divide one vector by another. What do you think
+the output *should* be?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+prod((4*(1:1000)^2)/(4*(1:1000)^2-1))
+```
+
+(Correct answer: $\approx 1.5704$, which happens to be awfully close to $\pi/2$)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn the full amount because I completed all of the questions correctly without copying either the work of others or the work that I had done previously.
+
+
+

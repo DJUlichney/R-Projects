@@ -1,0 +1,328 @@
+---
+title: "MTH-235 Assignment 11"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+
+```{r}
+vgsales <- 
+  read.csv("https://raw.githubusercontent.com/optmogames/Video-Games-Sales/master/vgsales.csv",
+           header = T)
+```
+
+
+## Problem 1
+Run the code block above to import the `vgsales` data frame, which includes data
+on video game sales scraped from \url{vgchartz.com}. (For more information on 
+this data frame, visit \url{https://www.kaggle.com/gregorut/videogamesales}).
+
+What variables does this data frame include, and what are their types?
+
+### Supporting Work
+```{r}
+str(vgsales)
+```
+
+### Answer
+
+<!-- Short answer: Type your answer after the > -->
+
+> This data frame features the variables rank, name, platform, year, genre, publisher,
+North American sales, European Union sales, Japanese sales, sales in other regions, and global sales.
+The rank variable is an integer when name, platform, year, genre, and publisher are
+all character variables and all of the sales variables are numerical variables.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 2
+There are 16,598 observations in the `vgsales` data frame. However, some of the 
+observations have the same `Name`; usually, this is because a single game was 
+sold on multiple different platforms. How many different titles (as specified by
+the `Name`) are there in the data frame?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+length(unique(vgsales$Name))
+```
+
+(Correct answer: $11,493$)
+
+---
+
+
+## Problem 3
+How many of the 16,598 video games in the data frame were published by Nintendo?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sum(vgsales$Publisher == "Nintendo")
+```
+
+(Correct answer: $703$)
+
+---
+
+## Problem 4
+What percent of the games (as represented by distinct rows) in the data frame 
+sold more units in Japan than in Europe?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(vgsales$EU_Sales < vgsales$JP_Sales) * 100
+```
+
+(Correct answer: $27.7\%$)
+
+---
+
+## Problem 5
+What is the year of publication of the oldest video game in the data frame, 
+ignoring the entries with missing dates?
+
+**NOTE**: There's a technical issue you'll have to solve here! First, notice
+that the `Year` variable does not have a numeric type; this is because there are
+some missing entries which are filled in with the string characters `N/A`, which
+results in R rendering the entire variable as a string type. So, you'll need to
+do two things:
+- coerce the variable to the `numeric` type
+- convince R to ignore the missing values
+We haven't discussed how to do these things. Use the internet to figure out how
+to do these two tasks.
+
+
+### Supporting Work
+```{r}
+vgyears <- strtoi(vgsales$Year[vgsales$Year != "N/A"])
+```
+
+### Answer
+```{r}
+min(vgyears)
+```
+
+(Correct answer: $1980$)
+
+---
+
+# Interlude
+
+For several of the problems below, you may find the `which.max()` function to be
+useful. We did not introduce this explicitly in class, so here's a quick
+demonstration:
+
+```{r}
+which.max(c(1000, 3000, 6000, 2000, 5000, 2000))
+```
+It is also possible to solve every problem below by avoiding `which.max()`
+entirely. It's your call.
+
+
+## Problem 6
+
+Run the code block above to import the `vgsales` data frame, which includes data
+on video game sales scraped from \url{vgchartz.com}. (For more information on 
+this data frame, visit \url{https://www.kaggle.com/gregorut/videogamesales}).
+
+The game "Portal 2" was sold on three different platforms, so it appears as
+three separate observations in this data frame (that all have the same name).
+On which platform did Portal 2 sell the most units (in terms of global sales)?
+
+### Supporting Work
+```{r}
+portalsales <- vgsales$Global_Sales[vgsales$Name == "Portal 2"]
+portalsystems <- vgsales$Platform[vgsales$Name == "Portal 2"]
+```
+
+### Answer
+```{r}
+portalsystems[which.max(portalsales)]
+```
+
+(Answer: `X360`, or XBox 360. Remember, when there's a code block for your
+answer, your job is to write a line of code that outputs that answer; in this
+case, the output should just be `X360`, not some larger object that contains
+that as a sub-part.)
+
+---
+
+## Problem 7
+In terms of global sales, what is the all-time best-selling game on the Sega 
+Genesis platform (`GEN`)?
+
+### Supporting Work
+```{r}
+GENsales <- vgsales$Global_Sales[vgsales$Platform == "GEN"]
+GENgames <- vgsales$Name[vgsales$Platform == "GEN"]
+```
+
+### Answer
+```{r}
+GENgames[which.max(GENsales)]
+```
+
+(Answer: Sonic the Hedgehog 2)
+
+---
+
+## Problem 8
+In terms of global sales, what is the all-time best-selling Puzzle-genre game 
+for the PlayStation 2 platform (`PS2`)? 
+
+**Note:** I think their categories are kind of terrible. For example, Pac-Man is
+clearly *not* a puzzle game even though it is labeled as such. But hey, nobody 
+asked me. 
+
+### Supporting Work
+```{r}
+PS2_Puzzle_Sales <- vgsales$Global_Sales[vgsales$Genre == "Puzzle" & vgsales$Platform == "PS2"]
+PS2_Puzzle_Games <- vgsales$Name[vgsales$Genre == "Puzzle" & vgsales$Platform == "PS2"]
+```
+
+### Answer
+```{r}
+PS2_Puzzle_Games[which.max(PS2_Puzzle_Sales)]
+```
+
+(Answer: Tetris Worlds)
+
+---
+
+## Problem 9
+In terms of *North American* sales, what is the best-selling racing game
+published by someone *other* than Nintendo?
+
+### Supporting Work
+```{r}
+racingsales <- vgsales$NA_Sales[vgsales$Genre == "Racing" & vgsales$Publisher != "Nintendo"]
+racinggames <- vgsales$Name[vgsales$Genre == "Racing" & vgsales$Publisher != "Nintendo"]
+```
+
+### Answer
+```{r}
+racinggames[which.max(racingsales)]
+```
+
+(Answer: Gran Turismo 3: A-Spec)
+
+---
+
+## Problem 10
+How many different observations (that is, rows) in the data frame begin with 
+"Yoshi"? *Hint*: Consider the role `substr()` might play here. 
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sum(substr(vgsales$Name, 1, 5) == "Yoshi")
+```
+
+(Answer: 11)
+
+---
+
+## Problem 11
+In terms of global sales, what is the \emph{worst}-selling SNES-platform game of
+all time that has the word "Mario" somewhere in its name?
+
+**Note:** To answer this, you need to be able to search for "Mario" within a
+string of characters. The `substr()` function can't do this, since you don't
+know where in the title the word "Mario" might appear. We have not encountered
+this function in our notebooks or in the Cheat Sheet; your task is to look to 
+the internet for help. There are several ways to proceed, at least one of which 
+does *not* require you to download an additional library.
+
+### Supporting Work
+```{r}
+Mariosales <- vgsales$Global_Sales[grepl("Mario", vgsales$Name) & vgsales$Platform == "SNES"]
+Mariogames <- vgsales$Name[grepl("Mario", vgsales$Name) & vgsales$Platform == "SNES"]
+```
+
+### Answer
+```{r}
+Mariogames[which.min(Mariosales)]
+```
+
+(Answer: Mario no Super Picross)
+
+---
+
+## Problem 12
+
+What is the ratio of total Mario franchise global sales to total Zelda franchise
+global sales? (Define the Mario and Zelda franchises as consisting of games that
+have either of those words in their titles.)
+
+### Supporting Work
+```{r}
+Mariototal <- sum(vgsales$Global_Sales[grepl("Mario", vgsales$Name)])
+Zeldatotal <- sum(vgsales$Global_Sales[grepl("Zelda", vgsales$Name)])
+```
+
+### Answer
+```{r}
+Mariototal / Zeldatotal
+```
+
+(Answer: $6.72$)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 15 points (*note the unusual number*), how 
+many points do you think you should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn all 15 points because I took the time that I needed
+to solve all of the problems correctly.
+
+---
+
+## Soliciting Feedback:
+
+This is a genuine question: do you think the self-assessment mechanism on
+homework was useful, not useful, or neither? **Why?** Note that your answer will
+not be held against you, no matter what it is.
+
+<!-- type your response to the feedback prompt below this line -->
+For me, the self-assessment on the homework assignments had no effect. However,
+I believe that keeping the self-assessments is a good idea because it provides
+a good way for the instructor to keep track of how confident the students are
+and what, if anything, they are struggling with.
+
+

@@ -1,0 +1,207 @@
+---
+title: "MTH-235 Assignment 3"
+author: "Dennis Ulichney"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+
+## Problem 1
+
+The game Scrabble contains 98 tiles with letters on them. (Some letters are
+repeated, obviously.) In the Supporting Work block below, you will find a vector
+representing these tiles. Simulate drawing a collection of 7 Scrabble tiles 
+(without replacement).
+
+### Supporting Work
+```{r}
+scrabble <- rep(LETTERS, c(9, 2, 2, 4, 12, 2, 3, 2, 9, 1,
+                           1, 4, 2, 6, 8, 2, 1, 6, 4, 6,
+                           4, 2, 2, 1, 2, 1))  # makes a vector of length 98
+```
+
+### Answer
+```{r}
+sample(scrabble,7)
+```
+
+(Correct answer: a collection of 7 random letters -- be sure you have correctly
+specified the `replace` parameter!)
+
+---
+
+## Problem 2
+In the game Bingo, a dealer draws several balls from a bin. There are 75 balls
+in the bin, each labeled with both a letter and a number. The labels are B-1, 
+B-2, ..., B-15, I-16, I-17, ..., I-30, N-31, N-32, ..., N-45, G-46, G-47, ...,
+G-60, O-61, O-62, ..., O-75.
+
+Simulate drawing a collection of ten of these balls randomly (without replacement)
+from the bin.
+
+### Supporting Work
+```{r}
+BINGO <- paste(rep(c("B","I","N","G","O"),each=15),(1:75),sep="-")
+```
+
+### Answer
+```{r}
+sample(BINGO,10)
+```
+
+(Correct answer: A random sequence of 10 things that look like `N-50` or `B-7`,
+complete with the hyphens.)
+
+---
+
+## Problem 3
+Simulate drawing 5 cards (without replacement) from a standard deck of 52.
+Recall that you constructed the "deck of cards" vector in the previous
+assignment.
+
+### Supporting Work
+```{r}
+Deck <- paste0(rep(c('A',2:9,'T','J','Q','K'),times=4),rep(c('H','C','D','S'),each=13))
+```
+
+### Answer
+```{r}
+sample(Deck,5)
+```
+
+(Correct answer: a list of five random cards such as "5H", "8S", or "QC")
+
+---
+
+## Problem 4
+Background: a vector can be given additional structure with the use of the
+`names()` function; see the example below in the Supporting Work section.
+
+A child chooses her own outfit. For each of her shirt, pants, and socks, she
+will select something that is either red, green, or blue. She may select the
+same color for multiple components of her outfit. She is twice as likely
+to select red as she is to select green, and she is three times as likely to
+select red as she is to select blue. 
+
+The `outfit` vector below is a static (i.e. non-random) vector; run the answer
+block to see its structure. Then, overwrite it so that the components of the 
+vector are random chosen to be red, green, or blue according to the 
+probabilities described above.
+
+### Supporting Work
+```{r}
+outfit <- c(sample(c("red","green","blue"),3,prob=c(6,3,2)))           # static vector of colors
+names(outfit) <- c("shirt", "pants", "socks")   # give the vector elements names
+```
+
+### Answer
+```{r}
+outfit  # don't change this block; change the supporting work block instead
+```
+
+(Correct answer: a named vector with names "shirt", "pants", and "socks" as 
+above, but whose entries are randomly populated with red, green, and blue. Make 
+sure the colors are chosen according to the probabilities described in the 
+problem statement!)
+
+---
+
+## Problem 5
+The `temperatures` vector, defined below, consists of temperature readings of
+731 human patients. A "normal" human temperature is defined as one that is
+between 97.7 and 99.5 degrees. What proportion of the temperatures in the
+vector qualify as normal? (Note: none of the temperatures are exactly 97.7 or
+99.5.)
+
+### Supporting Work
+```{r}
+# (run this block, but otherwise leave it alone)
+set.seed(1845)
+temperatures <- rnorm(731, 98.6, 0.5) # don't worry about rnorm() yet
+set.seed(as.numeric(Sys.time()))
+```
+
+### Answer
+```{r}
+mean((temperatures > 97.7) & (temperatures < 99.5))
+```
+
+(Correct answer: $0.9357$, or $93.57\%$)
+
+---
+
+## Problem 6
+Two people are playing a game. Player 1 rolls a D6; player 2 rolls a D4. They
+each roll their respective dice 100 times. The higher number wins the round;
+since Player 2 starts at a disadvantage, she also is declared the winner in the
+case of a tie.
+
+The records of their games are stored in the `player1` and `player2` vectors in
+the Supporting Work block below. How many games did Player 2 win?
+
+### Supporting Work
+```{r}
+# (run this block, but otherwise leave it alone)
+set.seed(999)
+player1 <- sample(1:6, 100, replace = T)
+player2 <- sample(1:4, 100, replace = T)
+set.seed(as.numeric(Sys.time()))
+```
+
+### Answer
+```{r}
+sum((player2 > player1) | (player2 == player1))
+```
+
+(Correct answer: $42$)
+
+---
+
+## Problem 7
+
+Someone flips a pair of coins many times. The results of these flips are stored
+in the `coins` vector below. Each entry of the vector corresponds to a *pair* of
+flips, so it looks like either `HH`, `HT`, `TH`, or `TT`.
+
+In what proportion of the flips did the player get two of the same outcome?
+
+### Supporting Work
+```{r}
+# (run this block, but otherwise leave it alone)
+set.seed(1024)
+coins <- sample(c("HH", "HT", "TH", "TT"), 500, replace = T)
+set.seed(as.numeric(Sys.time()))
+```
+
+### Answer
+```{r}
+mean((coins == "HH") | (coins == "TT"))
+```
+
+(Correct answer: $0.502$, or $50.2\%$)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+
+  I believe that I should earn the full amount of points because my work is correct and complete.
+
+
+

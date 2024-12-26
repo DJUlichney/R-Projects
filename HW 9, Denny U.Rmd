@@ -1,0 +1,213 @@
+---
+title: "MTH-235 Assignment 9"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+## Problem 1
+Upon studying low bids for shipping contracts, a microcomputer manufacturing
+company finds that intrastate contracts have low bids that are uniformly
+distributed between $\$20,000$ and $\$25,000$. Find the probability that the low
+bid on the next intrastate shipping contract is below $\$22,000$, given that it
+is below $\$23,000$.
+
+
+### Supporting Work
+```{r}
+p1 <- function(){
+  bid <- runif(1, 20000, 25000)
+  (bid < 22000)[bid < 23000]
+}
+```
+
+### Answer
+```{r}
+mean(unlist(replicate(10000, p1())))
+```
+
+(Correct answer: $2/3$)
+
+---
+
+## Problem 2
+
+An ice-maker makes ice cubes of random size. Each cube has a side length that is
+uniformly distributed on $[1, 2]$. (All sides must have the same length since
+this is a cube.) What is the expected side length of such a cube?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(replicate(10000, runif(1, 1, 2)))
+```
+
+(Correct answer: $1.5$, and you should stop and think about why that number
+makes perfect sense in the context of this problem.)
+
+---
+
+## Problem 3
+An ice-maker makes ice cubes of random size. Each cube has a side length that is
+uniformly distributed on $[1, 2]$. (All sides must have the same length since
+this is a cube.) What is the expected **volume** of such a cube?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(replicate(10000, runif(1, 1, 2)**3))
+```
+
+(Correct answer: $15/4 = 3.75$. Note in particular that although the expected
+side length was $1.5$, the expected volume is *not* $1.5^3 = 3.375$.)
+
+---
+
+## Problem 4
+Two people are positioned randomly in a 10' by 10' room. For social distancing
+purposes, they would like to remain at least 6' apart from one another. What is
+the probability that this has occurred?
+
+**Hint 1:** The position of one person can be modeled as having coordinates
+$(X, Y)$, each of which are uniformly distributed on $[0, 10]$.
+
+**Hint 2:** Remember the distance formula from some previous math class -- or, 
+if you have forgotten it, look it up.
+
+### Supporting Work
+```{r}
+p4 <- function(){
+  pos1 <- c(runif(1, 0, 10), runif(1, 0, 10))
+  pos2 <- c(runif(1, 0, 10), runif(1, 0, 10))
+  ((pos1[1] - pos2[1])^2 + (pos1[2] - pos2[2])^2)^.5 >= 6
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, p4()))
+```
+
+(Correct answer: around $38\%$)
+
+---
+
+## Problem 5
+A company that manufactures and bottles apple juice uses a machine that
+automatically fills 16-oz bottles. There is some variation, however, in the
+amounts of liquid dispensed in the bottles that are filled. The amount dispensed
+has been observed to be approximately normally distributed with mean 16.0 oz
+and standard deviation 1.0 oz. What is the probability that one bottle will have
+more than 17.0 oz dispensed into it?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(replicate(10000, rnorm(1, 16, 1) > 17))
+```
+
+(Correct answer: $0.1587$)
+
+---
+
+## Problem 6
+Refer to the previous problem. What is the probability that a bottle will be
+filled with more than 14.5 oz, given that it is filled with less than 16.5 oz?
+
+### Supporting Work
+```{r}
+p6 <- function(){
+  fill <- rnorm(1, 16, 1)
+  (fill > 14.5)[fill < 16.5]
+}
+```
+
+### Answer
+```{r}
+mean(unlist(replicate(10000, p6())))
+```
+
+(Correct answer: $0.9034$)
+
+---
+
+## Problem 7
+Refer to the previous two problems. If three bottles are filled, what is the
+probability that all three bottles will have between 14.5 and 16.5 oz?
+
+### Supporting Work
+```{r}
+p7 <- function(){
+  fill3 <- c(rnorm(1, 16, 1), rnorm(1, 16, 1), rnorm(1, 16, 1))
+  length(fill3[fill3 >= 14.5 & fill3 <= 16.5]) == 3
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, p7()))
+```
+
+(Correct answer: $0.2437$)
+
+---
+
+## Problem 8
+The length of time $Y$ needed to complete a key operation in the construction of
+houses has a normal distribution with $\mu = 10$ and $\sigma = 2$ (both in
+hours). The cost (in dollars) of completing the operation is found by the 
+formula $C = 100 + 40Y + 3Y^2$. What is the expected cost of completing the
+operation?
+
+### Supporting Work
+```{r}
+p8 <- function(){
+  time <- rnorm(1, 10, 2)
+  3*(time^2) + 40*(time) + 100
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, p8()))
+```
+
+(Correct answer: $812$)
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn full credit because I took the time necessary to
+complete all of the problems correctly.
+
+
+

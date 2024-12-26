@@ -1,0 +1,426 @@
+---
+title: "MTH-235 Exam 3"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+# Instructions
+
+* This exam is due **by 11:59 PM on Thursday, May 6** and should be  
+submitted in Blackboard (under Assignments / Exams).
+* Like always, for **every** question, your task is to do two things:
+    1. Write **one line** of code in the answer box that outputs your answer to 
+the question at hand.
+    2. If you need more than one line of code to answer the question, put the 
+other lines of code in the "supporting work" box.
+* Be sure that you have electronically signed this exam (see below).    
+ 
+# Important Details
+* You are **not** allowed to discuss the exam with any other person, living or 
+dead.
+* You **are** allowed to consult sources from within our Blackboard site, such 
+as:
+    * The cheat sheet
+    * Old Colab worksheets or keys
+    * Old assignment submissions or keys
+* You **are** allowed to consult documentation within RStudio.
+* You are **not** allowed to consult other internet sources besides our own
+Blackboard site. In particular, Stack Overflow is off limits for this exam,
+including searching the site (even if not posting questions there).
+* Control-flow measures like `if` / `ifelse`, `while`, or `for` are fine to use.
+* The point of every question is to use a Monte Carlo simulation, even if 
+directly calculating the answer using analytic methods is straightforward.
+* If you are unsure about whether something is allowed or not, check with me
+first.
+
+# Scoring
+
+Problems are listed with their points (not all problems have equal weight).
+the bonus problems are, as always, optional. There are a total of 70 points
+on this exam.
+
+
+\vfill
+
+By signing below, you certify that:
+
+* You have read all the guidelines on this sheet and have followed them all.
+* You have not discussed the exam with any other person. 
+* You have not used any disallowed source.
+* Your solutions are all based on your own understanding, and you could recreate
+them with no assistance.
+
+Signature:
+<!-- Erase the entire next line and replace it with your full name to sign. -->
+Dennis Ulichney
+
+\newpage
+
+# Exam
+
+## Problem 1
+
+```{r majordf, include = FALSE}
+majordf <- read.csv(
+  "https://raw.githubusercontent.com/fivethirtyeight/data/master/college-majors/all-ages.csv")
+```
+The `majordf` data frame, which can be loaded into your workspace by running the
+above code block, contains information about college majors based on data from 
+the 2010-2012 American Community Survey (ACS). 
+
+- Original data: \url{https://www.census.gov/programs-surveys/acs/
+microdata.html}
+- Cleaned data: \url{https://github.com/fivethirtyeight/data/blob/master/
+college-majors/all-ages.csv}
+- Corresponding article: \url{https://fivethirtyeight.com/features/
+the-economic-guide-to-picking-a-college-major/}
+
+## Problem 1a (5 pts)
+
+In the `majordf` data frame, how many different major categories are there?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+length(unique(majordf$Major_category))
+```
+
+(Correct answer: 16.)
+
+---
+
+## Problem 1b (10 pts)
+
+Continuing with `majordf`: What is the name of the major that has the highest 
+number of `Employed` graduates on record?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+majordf$Major[majordf$Employed == max(majordf$Employed)]
+```
+
+(Correct answer not disclosed for this problem, but: remember that you can view
+the data frame inside RStudio and click variable names to sort by columns. This
+is a pretty easy way to see for yourself what the correct answer should be. Your
+task for this problem is, of course, to write code that generates the name of a
+particular major.)
+
+---
+
+## Problem 1c (10 pts)
+
+Continuing with `majordf`: Consider only the collection of majors that have at 
+least 70,000 employees and a median salary of \$50,000 or more. What is the name
+of the major in this collection with the highest unemployement rate?
+
+### Supporting Work
+```{r}
+validmajors <- majordf$Major[majordf$Employed >= 70000 & majordf$Median >= 50000]
+validrates <- majordf$Unemployment_rate[majordf$Employed >= 70000 & majordf$Median >= 50000]
+```
+
+### Answer
+```{r}
+validmajors[validrates == max(validrates)]
+```
+
+(Correct answer: Again, not shown -- but with the sorting tools available in the
+RStudio IDE you can, and should, verify this for yourself.)
+
+---
+
+## Problem 1d (5 pts)
+Continuing with `majordf`: there is an apparent problem in the data frame.
+Specifically, there is one major for which the reported number of `Employed`
+graduates is *less* than the reported number of `Employed Full Time Year Round`
+graduates. What is the name of this major? (Write code that outputs the name.)
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+majordf$Major[majordf$Employed < majordf$Employed_full_time_year_round]
+```
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 2 
+
+```{r, include = FALSE}
+# don't edit this block
+alc_sea <- c(0.073, 0.104, 0.152, 0.118, 0.090, 0.161)
+alc_high <- c(0.130, 0.168, 0.146, 0.144, 0.103, 0.141)
+```
+
+Some have theorized that the effect of alcohol consumption on the body is much 
+greater at higher altitudes. To test this theory, a scientist randomly selected 
+12 subjects and divided them into two groups of 6 each. One group was 
+transported to an altitude of 12,000 feet, and each member in the group ingested
+100 cubic centimeters (cm$^3$) of alcohol. The members of the second group were 
+taken to sea level and given the same amount of alcohol. After two hours, the 
+amount of alcohol in the blood of each subject was measured (measurements in 
+grams per 100 cm$^3$). The data are given in the `alc_sea` and `alc_high` 
+vectors in the block above.
+
+To run a hypothesis test, our null hypothesis will be that there is no true
+difference between the groups; our alternative hypothesis will be that the
+median of the `alc_high` alcohol measurements are greater than those from the
+`alc_sea` group. 
+
+## Problem 2a (5 pts)
+
+In a classical statistics class (i.e. one not based on Monte Carlo statistics),
+a student might execute something called the Mann-Whitney-Wilcoxon test (also
+known as the Mann-Whitney U-test), which detects differences in medians between
+two groups. Run the code block below to see the use of such a test in R.
+
+```{r}
+# don't edit this block
+wilcox.test(alc_high, alc_sea, alternative = "g")  # Mann-Whitney-Wilcoxon test
+```
+
+Your question: What does that output imply about the original research question
+(i.e. "...the effect of alcohol consumption on the body is much greater at
+higher altitudes")? Your answer needs to clearly explain the conclusion that one
+should draw from the hypothesis test above.
+
+<!-- Type your answer after the > -->
+
+> Running this code gives me a p-value of 0.197, which is high enough that the
+null hypothesis cannot be disproven.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 2b (5 pts)
+
+The output of the code block above gave a $p$-value. Which of these is the 
+correct interpretation of that $p$-value? 
+
+### Answer
+
+<!-- answer by converting one [ ] to [X] -->
+
+- [ ] The probability that there **is** a difference between the groups is $0.197.$
+- [ ] The probability that there is **no** difference between the groups is $0.197.$
+- [ ] Assuming that there **is** a difference between the groups, the probability of
+having a gap between samples as large as the one observed is $0.197$.
+- [X] Assuming that there is **no** difference between the groups, the probability of
+having a gap between samples as large as the one observed is $0.197$.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 3 
+A study examined expressions of commitment between partners in heterosexual 
+romantic relationships. The study specifically wanted to investigate whether
+there is a difference between males and females in terms of which person was the
+first in the relationship to say, "I love you."
+
+In the survey, 40 couples were surveyed. Of those 40, 28 responded that the male
+in the relationship had said "I love you" before the female in the relationship
+did.
+
+## Problem 3a (5 pts)
+
+In words, what was their null hypothesis ($H_0$)? Your answer should be in non-
+technical language that someone who had never taken a statistics class would
+understand.
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> Since the scientists are looking to see if there is a difference between
+males and females, their null hypothesis would be that there is no difference
+between the two.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 3b (5 pts)
+
+Should a one-sided alternative hypothesis be used in this case, or a two-sided
+alternative hypothesis? Explain your reasoning.
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> A two-sided alternative hypothesis should be used because the scientists are
+simply looking to see if there is a difference between males and females, not
+whether or not one says they love the other person first more or less frequently.
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 3c (5 pts)
+
+Next, **visualize** the study by placing it in the context of many simulations
+under the null hypothesis. 
+
+### Supporting Work
+```{r}
+Males_First_Out_of_40_Couples <- replicate(10000, sum(sample(0:1, 40, replace = TRUE)))
+```
+
+### Answer
+```{r}
+hist(Males_First_Out_of_40_Couples)
+abline(v = 28, col = "blue")
+```
+
+(Correct answer: a histogram with a vertical line to distinguish to results of
+the particular study. It's fine if you want to skip specification of the
+`breaks` here.)
+
+---
+
+## Problem 3d (5 pts)
+
+Next, **evaluate** the extremity of the sample by computing the $p$-value.
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(Males_First_Out_of_40_Couples >= 28)
+```
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 3e (5 pts)
+
+Finally, **interpret** your work above. Does the study indicate a difference
+between males and females in terms of who says "I love you" first? Explain
+how you know.
+
+### Answer
+
+<!-- Type your answer after the > -->
+
+> Yes, the study does indicate a difference between males and females. I can say
+this because the p-value of the original experiment's result, assuming the
+null hypothesis is true, is rather small, only being about .0085. 
+
+(Correct answer not disclosed for this problem.)
+
+---
+
+## Problem 4 (5 pts)
+
+This question is borrowed from Francis Su, a professor of Mathematics at Harvey
+Mudd University (see [\underline{this excellent blog post}](https://www.francissu.com/post/7-exam-questions-for-a-pandemic-or-any-other-time)).
+
+Reflect on the mathematical virtue of **persistence**. Consider one homework 
+problem you have worked on this semester that you struggled to understand and 
+solve, and explain how the struggle itself was valuable. In the context of this
+question, describe the struggle and how you overcame the struggle. You might 
+also discuss whether struggling built aspects of character in you (e.g. 
+endurance, self-confidence, competence to solve new problems) and how these 
+virtues might benefit you in later ventures.
+
+<!-- Type your answer after the > -->
+> Although its really more of a type of problem than a single, specific one, I had
+a considerable amount of trouble understanding how to get the determinant of a
+matrix larger than 2x2 in my Linear Algebra class using cofactor expansion.
+This was largely because the examples in the notes for the class used different
+rows or columns for the operation with no discernible pattern. It wasn't until
+after I talked to the teacher that I learned that I can simply use any row or
+column that I want. Since then, I always use the top row of the matrix just
+because I like to keep things consistent. When it comes to character-building,
+I feel that this case didn't have a large impact because, at this point, I am
+already a very dedicated student. I do think, however, that this helped teach
+me that the solutions to my problems are not always as complicated as I think
+they are.
+
+(Please be as specific as you are able to be.)
+
+---
+
+## Bonus Problem 1 (2 pts)
+
+Household incomes in the US are **not** normally distributed; that is, a 
+histogram of US household incomes would not have a bell curve shape, but would 
+instead show a rightward skew because of the small number of earners whose 
+incomes vastly outpace the majority of incomes. 
+
+For an approximation, we can assume that the mean US household income is 50
+and the true standard deviation of US household incomes is 20, both measured
+in thousands of dollars. If you take a random sample of 28 households, what is
+the probability that the average household income will exceed \$60K?
+
+Remember: incomes are **not** normally distributed, and I didn't tell you how
+they **are** distributed.
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+mean(replicate(10000, rnorm(28, 50, 20) > 60))
+```
+
+(Correct answer not disclosed for this problem.)
+
+## Bonus Problem 2 (3 pts)
+
+A person is standing on a large two-dimensional space. He spins around in a 
+random angle and takes a step 1 foot in that direction. After making that step,
+he spins around again in a different random angle and takes a second step
+(irrespective of where he was after his first step). He does this for a total of
+ten steps. What is the probability that, after his tenth step, he is within a
+1-foot radius of his starting position? (Some geometry is required to solve this
+problem.)
+
+### Supporting Work
+```{r}
+tenstep <- function(){
+  angles <- runif(10, 0, 2*pi)
+  x <- 0
+  y <- 0
+  for (angle in angles) {
+    x <- x + cos(angle)
+    y <- y + sin(angle)
+  }
+  sqrt(x**2 + y**2)
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, tenstep() <= 1))
+```
+
+(Correct answer not disclosed for this problem.)
+
+<!-- Self-assessment for exams seems weird, so let's skip it. -->
+

@@ -1,0 +1,221 @@
+---
+title: "MTH-235 Assignment 8"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+---
+
+## Problem 1
+A gambler makes a sequence of bets. Each bet is a $\$1$ bet in which she has a
+$50\%$ chance of winning $\$1$ or losing $\$1$. She begins with a $\$2$ bankroll
+and continues betting until she either loses all her money or has a $\$10$ 
+bankroll. What is the probability that she will leave with $\$10$ (instead of 
+leaving with nothing)?
+
+### Supporting Work
+```{r}
+p1 <- function(){
+  bankroll <- 2
+  while (bankroll > 0 & bankroll < 10){
+    win <- sample(0:1,1)
+    if (win == 1){
+      bankroll <- bankroll + 1
+    }
+    else {
+      bankroll <- bankroll - 1
+    }
+  }
+  bankroll == 10
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, p1()))
+```
+
+(Correct answer: $20\%$)
+
+---
+
+## Problem 2
+In the MLB World Series, teams play against each other until one team wins 
+4 games. Suppose Cleveland has a $45\%$ chance of beating Chicago in each game. 
+What is the probability that Cleveland wins the world series?
+
+### Supporting Work
+```{r}
+p2 <- function(){
+  Cleveland <- 0
+  Chicago <- 0
+  while(Cleveland < 4 & Chicago < 4){
+     Clevewin <- sample(0:1, 1, prob=c(.55, .45))
+     if(Clevewin == 1){
+       Cleveland <- Cleveland + 1
+     }
+     else {
+       Chicago <- Chicago + 1
+     }
+  }
+  Cleveland == 4
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000, p2()))
+```
+
+(Correct answer: $\approx 0.3917$)
+
+---
+
+## Problem 3
+
+Suppose you repeatedly draw upper-case letters from a jar without replacement 
+until the first time you get one that is out of order. What is the expected 
+number of draws for this to occur? (Example: if you draw B-E-R-D, you would stop
+at D, because it was the first letter you drew that didn't occur after the 
+previous letter in the alphabet.)	
+
+**HINT**: To make your life easier, on each experiment you might use
+`sample(LETTERS)` to draw a full sample of all 26 letters in a random order and
+work from there.
+
+**Technical note**: It is OK to ignore the case where you draw all the letters
+in perfect order, because this is rare enough that it will probably not occur 
+even in trillions of simulations.
+
+### Supporting Work
+
+```{r}
+p3 <- function(){
+  draw <- sample(1:26)
+  count <- 2
+  while(draw[count] < draw[count-1]){
+    count <- count + 1
+  }
+  count
+}
+```
+
+### Answer
+
+```{r}
+mean(replicate(10000, p3()))
+```
+
+(Correct answer: about $2.72$ draws)
+
+---
+
+## Problem 4
+
+A COVID-19 serology test developed by Cellex Inc. tests the blood of patients to
+determine whether they have previously carried the coronavirus. The 
+**sensitivity** of the test, or the probability that they test positive given 
+that they had the virus, is $93.8\%$. Similarly, the **specificity** of the 
+test, or the probability that they test negative given that they have not had 
+the virus, is $95.6\%$. (Note: All information in this paragraph is
+[true](https://www.centerforhealthsecurity.org/resources/COVID-19/serology/Serology-based-tests-for-COVID-19.html).) 
+
+In a certain region, about $10\%$ of residents have been exposed to the 
+coronavirus. What is the probability that a randomly-selected individual has had
+the disease, given that they have a positive test? 
+
+### Supporting Work
+
+```{r}
+p4 <- function(){
+  exposure <- sample(0:1, 1, prob = c(90, 10))
+  if(exposure == 1){
+    positive <- sample(0:1, 1, prob = c(6.2, 93.8))
+  }
+  else {
+    positive <- sample(0:1, 1, prob = c(95.6, 4.4))
+  }
+  (exposure)[positive]
+}
+```
+
+### Answer
+
+```{r}
+mean(unlist(replicate(10000, p4())))
+```
+
+(Correct answer: $\approx 0.7031$)
+
+---
+
+## Problem 5
+
+A plane seats 100 passengers. The first passenger to board a full flight loses
+his ticket, so he randomly selects one of the available seats. Every subsequent
+passenger sits in their assigned seat (if open) or picks one of the available
+seats randomly if not. What is the probability that the final passenger will sit
+in her own seat? 
+
+(Correct answer: exactly $50\%$, and if you're anything like me, that's a
+surprising answer)
+
+### Note
+
+This problem can be completed using only things explicitly found in the Cheat
+Sheet up through section 3.5. However, you are strongly encouraged to hunt on
+the internet for new functions that we haven't used if you think they would 
+serve you well for this problem. (The only thing you *shouldn't* do is post this
+exact question on Stack Overflow or something like that.)
+
+### Supporting Work
+
+```{r}
+# The code here was copied from my solution to the same problem in Worksheet 3.5.
+p5 <- function(){
+  p1 <- sample(1:100,1)
+  seats <- (1:100)[-p1]
+  for (p in 1:98){
+    if (p %in% seats){
+      seats <- seats[-which(p==seats)]
+    }
+
+    else {
+      seats <- seats[-which(sample(seats,1)==seats)]
+    }
+  }
+  100 %in% seats
+}
+```
+
+### Answer
+
+```{r}
+mean(replicate(10000, p5()))
+```
+
+---
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn the full amount because I took the time that I needed to answer each question correctly.
+
+
+

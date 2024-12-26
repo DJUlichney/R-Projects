@@ -1,0 +1,54 @@
+---
+title: "Group Project"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Part 1: Finds the difference between the proportion of deaths with the killer nurse and the proportion of deaths without her:
+```{r}
+proj_3 <- read.delim("C:/Users/Owner/Downloads/proj_3.txt") # Imports data.
+wGilbert <- proj_3$Patient[proj_3$GilbertWorked. == "Yes"]
+noGilbert <- proj_3$Patient[proj_3$GilbertWorked. == "No"]
+
+OriginalDiff <- mean(wGilbert == "Death") - mean(noGilbert == "Death")
+```
+
+
+## Part 2: Creates a function that shuffles the data and computes a new difference of proportions:
+```{r}
+shuffleDiff <- function(){
+  proj_3$Patient <- sample(proj_3$Patient)
+  
+  wGilbert2 <- proj_3$Patient[proj_3$GilbertWorked. == "Yes"]
+  noGilbert2 <- proj_3$Patient[proj_3$GilbertWorked. == "No"]
+
+  mean(wGilbert2 == "Death") - mean(noGilbert2 == "Death")
+}
+
+mean(replicate(10000, shuffleDiff()))
+```
+
+
+## Part 3: Finds the p-value of the original difference of proportions against the distribution of shuffled differences:
+```{r}
+# Null Hypothesis: Gilbert's presence had no effect.
+# Alternative Hypothesis: There were more deaths when Gilbert was around.
+
+mean(replicate(10000, shuffleDiff() >= OriginalDiff))
+```
+
+
+## Part 4: Graphs the data from shuffleDiff and shows where on the graph the original difference of proportions falls:
+```{r}
+hist(replicate(10000, shuffleDiff()), breaks = seq(-.15, .15, by = .01))
+abline(v = OriginalDiff, lty = 3, col = "blue")
+
+# The result of this code shows that the difference of proportions found in the
+# original data does not fall on the distribution of the shuffled data, resulting
+# in a p-value of 0.
+```
+

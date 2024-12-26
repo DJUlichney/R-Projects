@@ -1,0 +1,233 @@
+---
+title: "MTH-235 Assignment 6"
+author: "Dennis Ulichney"
+date: '`r gsub("(\\D)0", "\\1", format(Sys.Date(), "%B %d, %Y"))`'
+output: pdf_document
+editor_options:
+  chunk_output_type: inline
+---
+
+
+All assignments and exams will be submitted through R Markdown Notebooks like
+these. For **every** question, your task is to do two things:
+
+1. Write **one line** of code in the answer box that outputs your answer to the
+question at hand.
+
+2. If you need more than one line of code to answer the question, put the other
+lines of code in the "supporting work" box.
+
+
+```{r, include = FALSE}
+  # do not edit this block
+  # note that the option include = FALSE hides this from your PDF output
+cards <- 
+  paste0(c("A", "2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K"),
+         rep(c("H", "C", "S", "D"), each = 13))
+  # format of cards is: [value][suit], such as "3H" for 3 of hearts,
+  # "7C" for 7 of clubs, "TD" for 10 of diamonds
+```
+
+## Problem 1
+If you draw a five-card hand (without replacement) from a deck of cards, what is
+the probability that the fourth card is a heart? (Note that the `cards` vector 
+is available in the block above.)
+
+### Supporting Work
+```{r}
+fourthheart <- function(){
+  substr(sample(cards,5),2,2)[4]=="H"
+}
+```
+
+### Answer
+```{r}
+mean(replicate(10000,fourthheart()))
+```
+
+(Correct answer: $1/4$, which hopefully makes intuitive sense.)
+
+
+---
+
+## Problem 2
+In the game of Risk, a player may send their army to attack another army. The
+attacking player can roll up to three dice and the defending player can roll up
+to two. (For simplicity, we will consider the case where each player rolls the
+maximum number of dice possible.)
+
+When scoring a battle, the attacker's top die is compared against the defender's
+top die, and the attacker's middle die is compared against the defender's lower
+die. The attacker has an inherent advantage in that they may discard their
+lowest roll; however, the defender is also given an advantage in that they win
+the results of any ties. The player who loses a roll comparison must forfeit one
+army from their territory.
+
+As an example: if the attacker rolls $(3, 1, 6)$ and the defender rolls
+$(5, 3)$, then the attacker's $6$ is compared to the defender's $5$ (result: 
+defender loses one army), and the attacker's $3$ is compared to the defender's
+$3$ (result: attacker loses one army, because defender wins ties). The net
+result of every battle that occurs in this fashion is that the attacker will
+lose 0, 1, or 2 armies. 
+
+Write a function that simulates the number of armies **lost** by an attacker 
+during a battle that takes place as described above; its output should be 0, 1, 
+or 2. Then, use this function to simulate 10,000 battles and construct a 
+histogram of the results.
+
+### Supporting Work
+```{r}
+risk <- function(){
+  A <- sort(sample(1:6,3,replace=T))[-1]
+  D <- sort(sample(1:6,2,replace=T))
+  sum((D[2] >= A[2]),(D[1] >= A[1]))
+}
+```
+
+### Answer
+
+```{r}
+hist(replicate(10000,risk()),breaks=-0.5:2.5)
+```
+
+(Correct answer: a histogram with three bars that descend slightly from left to
+right -- don't forget to adjust the `breaks`!)
+
+---
+
+## Problem 3
+
+Reconsider the Risk setup from the previous problem. What is the expected
+number of armies lost by the attacker?
+
+### Supporting Work
+
+```{r}
+risk <- function(){
+  A <- sort(sample(1:6,3,replace=T))[-1]
+  D <- sort(sample(1:6,2,replace=T))
+  sum((D[2] >= A[2]),(D[1] >= A[1]))
+}
+```
+
+### Answer
+
+```{r}
+mean(replicate(10000,risk()))
+```
+
+(Correct answer: $2387/2592 \approx 0.9209$)
+
+---
+
+## Problem 4
+The following code block will obtain the first 10,000 prime numbers from the
+OEIS (Online Encyclopedia of Integer Sequences). Run this block once to store
+these numbers as the vector `primes` in your workspace.
+
+```{r, include = FALSE}
+primes <- read.table("https://oeis.org/A000040/b000040.txt", header = F,
+                     sep = " ")[, 2]
+```
+
+What is the sum of all the prime numbers that are less than 100?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+sum(primes[primes < 100])
+```
+
+(Correct answer: $1,060$; answer to this one should exactly match)
+
+---
+
+## Problem 5
+How many of the first 10,000 primes have a remainder of 1 when divided by 3?
+
+### Supporting Work
+```{r}
+
+```
+
+### Answer
+```{r}
+length(primes[primes%%3==1])
+```
+
+(Correct answer: $4,988$; answer to this one should exactly match)
+
+--- 
+
+## Problem 6
+What is the sum of all the primes between 1000 and 2000 with a last digit of 1?
+
+### Supporting Work
+```{r}
+sumprimes <- function(){
+  tprimes <- primes[primes > 1000 & primes < 2000]
+  sum(tprimes[tprimes%%10==1])
+}
+```
+
+### Answer
+```{r}
+sumprimes()
+```
+
+(Correct answer: $48,503$; answer to this one should exactly match)
+
+---
+
+## Problem 7
+
+The Supporting Work block contains a function that simulates rolling two dice
+and taking their sum. This process is simulated 10,000 times and the results
+are stored in the `dice_sum` vector.
+
+What is the average of the entries in `dice_sum` that are at least 7?
+
+### Supporting Work
+
+```{r}
+# leave the code below alone
+# ========
+sum_of_two <- function(){
+  sum(sample(1:6, 2, replace = T))
+}
+set.seed(121212)
+dice_sum <- replicate(10000, sum_of_two())
+set.seed(NULL)
+# ========
+# leave the code above alone
+
+
+```
+
+### Answer
+
+```{r}
+mean(dice_sum[dice_sum >= 7])
+```
+
+(Correct answer: $8.6604$; answer to this one should exactly match up to a
+rounding error)
+
+---
+
+
+## Self Assessment:
+
+If this assignment is graded out of 10 points, how many points do you think you
+should earn, **and why?**
+
+<!-- type your response to the self assessment below this line -->
+I believe that I should earn full credit because I put forth the effort
+necessary to answer all questions correctly.
+
+
+
